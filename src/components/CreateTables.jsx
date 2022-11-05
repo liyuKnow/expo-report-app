@@ -11,9 +11,11 @@ import {
 // Import Models
 import User from "../models/User";
 import UpdateLocation from "../models/UpdateLocation";
+import * as Location from "expo-location";
 
 const CreateTables = () => {
   const [users, setUsers] = useState([]);
+  const [location, setLocation] = useState(null);
 
   const createTables = useCallback(async () => {
     // TODO: for INSERTING DATA FROM FILE : delete tables and recreate them
@@ -97,20 +99,37 @@ const CreateTables = () => {
       User.update(props);
 
       // TODO create updated location with lat, long for updated user
-      const updateLocationProps = {
-        user_id: id,
-        lat: 8.9895634,
-        long: 11.78654,
-      };
-
-      const updateLocation = new UpdateLocation(updateLocationProps);
-      await updateLocation.save();
+      //   ! else for ERROR HANDLING
+      await getLocation();
+      if (location !== null) {
+        const updateLocationProps = {
+          user_id: id,
+          lat: location.latitude,
+          long: location.longitude,
+        };
+        const updateLocation = new UpdateLocation(updateLocationProps);
+        await updateLocation.save();
+      }
 
       setUsers(await User.query());
     } catch (error) {
       console.log(error);
     }
   }, []);
+
+  const getLocation = async () => {
+    try {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location.coords);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -123,7 +142,7 @@ const CreateTables = () => {
 
       <TouchableOpacity
         style={{ padding: 12, backgroundColor: "green", margin: 4 }}
-        onPress={getUpdateLocations}
+        onPress={getLocation}
       >
         <Text style={{ color: "white", fontSize: 24 }}>Get Locations</Text>
       </TouchableOpacity>
@@ -143,7 +162,7 @@ const CreateTables = () => {
 
       <TouchableOpacity
         style={{ padding: 12, backgroundColor: "green", margin: 4 }}
-        onPress={() => updateUser(7)}
+        onPress={() => updateUser(8)}
       >
         <Text style={{ color: "white", fontSize: 24 }}>Update User</Text>
       </TouchableOpacity>
