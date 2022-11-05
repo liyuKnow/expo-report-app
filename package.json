@@ -10,14 +10,16 @@
   },
   "dependencies": {
     "expo": "~46.0.16",
+    "expo-asset": "~8.6.1",
+    "expo-device": "~4.3.0",
+    "expo-file-system": "~14.1.0",
+    "expo-location": "~14.3.0",
+    "expo-sqlite": "~10.3.0",
+    "expo-sqlite-orm": "^1.6.0",
     "expo-status-bar": "~1.4.0",
     "react": "18.0.0",
     "react-native": "0.69.6",
-    "react-native-file-access": "^2.5.0",
-    "expo-file-system": "~14.1.0",
-    "expo-asset": "~8.6.1",
-    "expo-location": "~14.3.0",
-    "expo-device": "~4.3.0"
+    "react-native-file-access": "^2.5.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

@@ -11,7 +11,7 @@ export default class UpdateLocation extends BaseModel {
     }
 
     static get tableName() {
-        return 'updatedLocation'
+        return 'updateLocation'
     }
 
     static get columnMapping() {
@@ -20,13 +20,13 @@ export default class UpdateLocation extends BaseModel {
             user_id: { type: types.INTEGER, not_null: true },
             lat: { type: types.INTEGER, not_null: true },
             long: { type: types.INTEGER, not_null: true },
-            timestamp: { type: types.TEXT, default: () => Date.now() }
+            updated_at: { type: types.TEXT, default: () => Date.now() }
         }
     }
 
     // MANUALLY CREATE RELATED TABLES
     static createUpdateLocation() {
-        const albumTableSql = `CREATE TABLE updateLocation(
+        const updateLocationTableSql = `CREATE TABLE updateLocation(
             Id     INTEGER PRIMARY KEY AUTOINCREMENT, 
             user_id   INTEGER NOT NULL,
             lat        INTEGER NOT NULL,
@@ -34,6 +34,22 @@ export default class UpdateLocation extends BaseModel {
             updated_at TEXT DEFAULT current_timestamp NOT NULL,
             FOREIGN KEY(user_id) REFERENCES users(id)
           )`;
-        return this.repository.databaseLayer.executeSql(albumsSql).then(({ rows }) => console.log(rows))
+
+        return this.repository.databaseLayer.executeSql(getTableSchemaSql).then(({ rows }) => console.log(rows))
+    }
+
+    static executeRaw() {
+        //   ! TEST SECTION
+        const getTablesSql = `
+        SELECT name FROM sqlite_master WHERE type='table'
+          `;
+
+        const getTableSchemaSql = `
+            SELECT sql 
+            FROM sqlite_master 
+            WHERE name = 'updateLocation';`;
+
+        const getUpdateLocationsSql = `SELECT * FROM updateLocation`;
+        return this.repository.databaseLayer.executeSql(getUpdateLocationsSql).then(({ rows }) => console.log(rows))
     }
 }

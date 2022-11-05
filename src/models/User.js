@@ -26,4 +26,15 @@ export default class User extends BaseModel {
             date: { type: types.INTEGER, default: () => Date.now() }
         }
     }
+
+    static getUsers() {
+        const options = {
+            where: {
+                completed_eq: false
+            },
+            order: 'name ASC'
+        }
+
+        User.query(options)
+    }
 }
