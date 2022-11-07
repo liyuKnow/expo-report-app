@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  SafeAreaView,
+  StyleSheet,
+  StatusBar,
+  Text,
+  View,
+} from "react-native";
 import User from "../models/User";
 
 const BasicFlatList = () => {
   const [usersData, setUsersData] = useState({});
+
   useEffect(() => {
     getUsersData = async () => {
       try {
@@ -14,7 +22,6 @@ const BasicFlatList = () => {
           order: "id ASC",
         };
         const res = await User.query(options);
-        console.log(res[0]);
         setUsersData(res);
       } catch (error) {
         console.log(error);
@@ -23,42 +30,47 @@ const BasicFlatList = () => {
     getUsersData();
   }, []);
 
-  console.log(usersData);
+  const renderItem = ({ item }) => <Item item={item} />;
+
   return (
-    <View style={styles.container}>
-      {usersData !== null && (
-        <FlatList
-          data={usersData}
-          renderItem={({ first_name, last_name }) => (
-            <Text style={styles.item}>
-              {first_name}
-              {last_name}
-              Item
-            </Text>
-          )}
-        />
-      )}
-    </View>
+    <SafeAreaView style={styles.container}>
+      <FlatList
+        data={usersData}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+      />
+    </SafeAreaView>
   );
 };
 
 export default BasicFlatList;
 
+// TODO : Touchable area to allow updates
+const Item = ({ item }) => (
+  <View style={styles.item}>
+    <Text style={styles.title}>
+      {item.first_name} {item.last_name}
+    </Text>
+    <Text style={styles.subTitle}>{item.country}</Text>
+  </View>
+);
+
 // FLAT LIST
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 22,
-    paddingLeft: 4,
-    paddingEnd: 4,
+    marginTop: StatusBar.currentHeight || 0,
   },
   item: {
-    backgroundColor: "pink",
-    margin: 2,
-    padding: 10,
-    fontSize: 18,
-    height: 44,
-    borderRadius: 3,
-    shadowColor: "red",
+    backgroundColor: "#f9c2ff",
+    padding: 20,
+    marginVertical: 8,
+    marginHorizontal: 16,
+  },
+  title: {
+    fontSize: 32,
+  },
+  subTitle: {
+    fontSize: 24,
   },
 });
